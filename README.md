@@ -1,5 +1,7 @@
 # KnockKnock
 
+[![Coverage Status](https://coveralls.io/repos/github/take-the-interview/knock_knock/badge.svg?branch=master)](https://coveralls.io/github/take-the-interview/knock_knock?branch=master)
+
 Flexible authorization solution which uses policy in json format to check permissions.
 
 ## Installation
