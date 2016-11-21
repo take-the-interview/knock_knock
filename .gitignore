@@ -7,3 +7,10 @@
 /pkg/
 /spec/reports/
 /tmp/
+/coverage
+
+*.swp
+*~
+*.DS_Store
+*.sublime-*
+.idea
