@@ -11,15 +11,15 @@ module KnockKnock
 
 
     resource_patterns = KnockKnock::Util.extract_resource_patterns(resource)
-
-    policy['statements'].each do |statement|
-      statement_permissions = KnockKnock::Util.extract_permissions_from_roles(statement['roles'], roles_with_permissions)
-
-      if statement_permissions.include?(permission)
-        return true if (resource_patterns & statement['resources']).any?
+    resource_patterns.each do |resource_pattern|
+      if policy['statements'].has_key?(resource_pattern)
+        statement_permissions = KnockKnock::Util.extract_permissions_from_roles(policy['statements'][resource_pattern], roles_with_permissions)
+        if statement_permissions.include?(permission)
+          return true
+        end
       end
     end
-
+    
     return false
   end
 end
