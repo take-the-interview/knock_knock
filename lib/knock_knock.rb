@@ -22,4 +22,14 @@ module KnockKnock
     
     return false
   end
+
+  def self.add_roles(permission, roles, resource)
+    if permission['statements'].has_key?(resource)
+      permission['statements'][resource] += roles
+    else
+      permission['statements'][resource] = roles
+    end
+
+    permission
+  end
 end

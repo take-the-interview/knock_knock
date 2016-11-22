@@ -41,4 +41,24 @@ describe KnockKnock do
       expect { KnockKnock.has_permission?(permission, resource, policy, nil) }.to raise_error(ArgumentError)
     end 
   end
+
+  describe '.add_roles' do
+    let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { 'companies/2' => ['companies.interviews.fullAccess'] } } }
+    let!(:role1) { 'companies.interviews.user_interviews.manageResponses' }
+    let!(:roles) { [role1] }
+    let!(:resource) { 'companies/7' }
+    
+    it 'adds new statement if there is no one with given resource' do
+      updated_policy = KnockKnock.add_roles(policy, roles, resource)
+
+      expect(updated_policy['statements']).to have_key(resource)
+    end
+
+    it 'adds roles to existing statement if there is one with given resource' do
+      resource = 'companies/2'
+      updated_policy = KnockKnock.add_roles(policy, roles, resource)
+
+      expect(updated_policy['statements'][resource]).to include(role1)
+    end
+  end
 end
