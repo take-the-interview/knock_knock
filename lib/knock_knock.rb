@@ -24,6 +24,11 @@ module KnockKnock
   end
 
   def self.add_roles(policy, roles, resource)
+    raise ArgumentError, "permission can't be nil" if policy.nil?
+    raise ArgumentError, "roles can't be nil" if roles.nil?
+    raise ArgumentError, "roles can't be empty array" if roles.empty?
+    raise ArgumentError, "resource can't be nil" if resource.nil?
+    
     if policy['statements'].has_key?(resource)
       policy['statements'][resource] += roles
     else
@@ -34,6 +39,11 @@ module KnockKnock
   end
 
   def self.remove_roles(policy, roles, resource)
+    raise ArgumentError, "permission can't be nil" if policy.nil?
+    raise ArgumentError, "roles can't be nil" if roles.nil?
+    raise ArgumentError, "roles can't be empty array" if roles.empty?
+    raise ArgumentError, "resource can't be nil" if resource.nil?
+
     policy['statements'][resource] -= roles
 
     if policy['statements'][resource].empty?

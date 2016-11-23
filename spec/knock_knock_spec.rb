@@ -60,6 +60,22 @@ describe KnockKnock do
 
       expect(updated_policy['statements'][resource]).to include(role1)
     end
+
+    it 'raises exception if policy is nil' do
+      expect { KnockKnock.remove_roles(nil, [role1], resource) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises exception if roles is nil' do
+      expect { KnockKnock.remove_roles(policy, nil, resource) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises exception if roles is nil' do
+      expect { KnockKnock.remove_roles(policy, [], resource) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises exception if resource is nil' do
+      expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
+    end
   end
 
   describe '.remove_roles' do
@@ -79,6 +95,22 @@ describe KnockKnock do
       updated_policy = KnockKnock.remove_roles(policy, [role1, role2], resource)
 
       expect(updated_policy['statements']).not_to have_key(resource)
+    end
+
+    it 'raises exception if policy is nil' do
+      expect { KnockKnock.remove_roles(nil, [role1], resource) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises exception if roles is nil' do
+      expect { KnockKnock.remove_roles(policy, nil, resource) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises exception if roles is nil' do
+      expect { KnockKnock.remove_roles(policy, [], resource) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises exception if resource is nil' do
+      expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
     end
   end
 end
