@@ -61,4 +61,24 @@ describe KnockKnock do
       expect(updated_policy['statements'][resource]).to include(role1)
     end
   end
+
+  describe '.remove_roles' do
+    let!(:role1) { 'companies.interviews.user_interviews.manageResponses' }
+    let!(:role2) { 'companies.interviews.fullAccess' }
+    let!(:resource) { 'companies/1' }
+    let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { resource => [role1, role2] } } }
+    
+
+    it 'removes roles from resource' do
+      updated_policy = KnockKnock.remove_roles(policy, [role1], resource)
+
+      expect(updated_policy['statements'][resource]).to eq [role2]
+    end
+
+    it 'removes resource if it does not contain any role' do
+      updated_policy = KnockKnock.remove_roles(policy, [role1, role2], resource)
+
+      expect(updated_policy['statements']).not_to have_key(resource)
+    end
+  end
 end

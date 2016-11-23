@@ -23,13 +23,23 @@ module KnockKnock
     return false
   end
 
-  def self.add_roles(permission, roles, resource)
-    if permission['statements'].has_key?(resource)
-      permission['statements'][resource] += roles
+  def self.add_roles(policy, roles, resource)
+    if policy['statements'].has_key?(resource)
+      policy['statements'][resource] += roles
     else
-      permission['statements'][resource] = roles
+      policy['statements'][resource] = roles
     end
 
-    permission
+    policy
+  end
+
+  def self.remove_roles(policy, roles, resource)
+    policy['statements'][resource] -= roles
+
+    if policy['statements'][resource].empty?
+      policy['statements'].delete(resource)
+    end
+
+    policy
   end
 end
