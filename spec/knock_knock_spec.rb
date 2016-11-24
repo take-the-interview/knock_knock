@@ -62,19 +62,19 @@ describe KnockKnock do
     end
 
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.remove_roles(nil, [role1], resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(nil, [role1], resource) }.to raise_error(ArgumentError)
     end
 
     it 'raises exception if roles is nil' do
-      expect { KnockKnock.remove_roles(policy, nil, resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(policy, nil, resource) }.to raise_error(ArgumentError)
     end
 
     it 'raises exception if roles is nil' do
-      expect { KnockKnock.remove_roles(policy, [], resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(policy, [], resource) }.to raise_error(ArgumentError)
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
     end
   end
 
@@ -111,6 +111,40 @@ describe KnockKnock do
 
     it 'raises exception if resource is nil' do
       expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe '.create_policy' do
+    etag = 123
+    version = '1'
+
+    it 'returns policy structure with required fields' do
+      policy = KnockKnock.create_policy(etag, version)
+
+      expect(policy.keys.sort).to eq ['etag', 'version', 'statements'].sort
+      expect(policy['etag']).to eq etag
+      expect(policy['version']).to eq version
+      expect(policy['statements']).to eq({})
+    end
+
+    it 'raises exception if etag is nil' do
+      expect { KnockKnock.create_policy(nil, version) }.to raise_error(ArgumentError, "etag can't be nil")
+    end
+
+    it 'raises exception if version is nil' do
+      expect { KnockKnock.create_policy(etag, nil) }.to raise_error(ArgumentError, "version can't be nil")
+    end
+    
+    it 'raises exception if etag is not integer' do
+      etag = 123.45
+
+      expect { KnockKnock.create_policy(etag, version) }.to raise_error(ArgumentError, "wrong argument type #{etag.class} (expected Integer)")
+    end
+
+    it 'raises exception if version is not string' do
+      version = 1
+      
+      expect { KnockKnock.create_policy(etag, version) }.to raise_error(ArgumentError, "wrong argument type #{version.class} (expected String)")
     end
   end
 end
