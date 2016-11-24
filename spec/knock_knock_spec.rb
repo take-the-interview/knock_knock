@@ -26,19 +26,19 @@ describe KnockKnock do
     end
 
     it 'raises exception if permission is nil' do
-      expect { KnockKnock.has_permission?(nil, resource, policy, roles_with_permissions) }.to raise_error(ArgumentError)
+      expect { KnockKnock.has_permission?(nil, resource, policy, roles_with_permissions) }.to raise_error(ArgumentError, "permission can't be nil")
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.has_permission?(permission, nil, policy, roles_with_permissions) }.to raise_error(ArgumentError)
+      expect { KnockKnock.has_permission?(permission, nil, policy, roles_with_permissions) }.to raise_error(ArgumentError, "resource can't be nil")
     end
     
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.has_permission?(permission, resource, nil, roles_with_permissions) }.to raise_error(ArgumentError)
+      expect { KnockKnock.has_permission?(permission, resource, nil, roles_with_permissions) }.to raise_error(ArgumentError, "policy can't be nil")
     end
 
     it 'raises exception if roles_with_permissions is nil' do
-      expect { KnockKnock.has_permission?(permission, resource, policy, nil) }.to raise_error(ArgumentError)
+      expect { KnockKnock.has_permission?(permission, resource, policy, nil) }.to raise_error(ArgumentError, "roles_with_permissions can't be nil")
     end 
   end
 
@@ -62,19 +62,19 @@ describe KnockKnock do
     end
 
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.add_roles(nil, [role1], resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(nil, [role1], resource) }.to raise_error(ArgumentError, "policy can't be nil")
     end
 
     it 'raises exception if roles is nil' do
-      expect { KnockKnock.add_roles(policy, nil, resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(policy, nil, resource) }.to raise_error(ArgumentError, "roles can't be nil")
     end
 
     it 'raises exception if roles is nil' do
-      expect { KnockKnock.add_roles(policy, [], resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(policy, [], resource) }.to raise_error(ArgumentError, "roles can't be empty array")
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.add_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
+      expect { KnockKnock.add_roles(policy, [role1], nil) }.to raise_error(ArgumentError, "resource can't be nil")
     end
   end
 
@@ -98,25 +98,25 @@ describe KnockKnock do
     end
 
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.remove_roles(nil, [role1], resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.remove_roles(nil, [role1], resource) }.to raise_error(ArgumentError, "policy can't be nil")
     end
 
     it 'raises exception if roles is nil' do
-      expect { KnockKnock.remove_roles(policy, nil, resource) }.to raise_error(ArgumentError)
+      expect { KnockKnock.remove_roles(policy, nil, resource) }.to raise_error(ArgumentError, "roles can't be nil")
     end
 
-    it 'raises exception if roles is nil' do
-      expect { KnockKnock.remove_roles(policy, [], resource) }.to raise_error(ArgumentError)
+    it 'raises exception if roles is empty array' do
+      expect { KnockKnock.remove_roles(policy, [], resource) }.to raise_error(ArgumentError, "roles can't be empty array")
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError)
+      expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError, "resource can't be nil")
     end
   end
 
   describe '.create_policy' do
-    etag = 123
-    version = '1'
+    let!(:etag) { 123 }
+    let!(:version) { '1' }
 
     it 'returns policy structure with required fields' do
       policy = KnockKnock.create_policy(etag, version)
