@@ -20,11 +20,11 @@ class KnockKnock::Util
     resource_patterns
   end
 
-  def self.extract_permissions_from_roles(roles, roles_with_permissions)
+  def self.extract_permissions_from_permission_groups(permission_groups, permission_groups_mapping)
     permissions = []
-    
-    roles.each do |role|
-      permissions << roles_with_permissions[role]
+
+    permission_groups.each do |permission_group|
+      permissions << permission_groups_mapping[permission_group]
     end
 
     permissions.flatten!

@@ -6,111 +6,111 @@ describe KnockKnock do
     let!(:resource) { 'companies/1:department/1:interviews/62' }
     let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => {
       'companies/1' => ['companies.interviews.fullAccess'], 'companies/2' => ['companies.interviews.fullAccess'] } } }
-    let!(:roles_with_permissions) { { 'companies.interviews.fullAccess' => ['companies.interviews.show',
+    let!(:permission_groups_mapping) { { 'companies.interviews.fullAccess' => ['companies.interviews.show',
       'companies.interviews.create', 'companies.interviews.edit'] } }
 
     it 'returns true if there is permission in policy for given resource' do
-      expect(KnockKnock.has_permission?(permission, resource, policy, roles_with_permissions)).to eq true
+      expect(KnockKnock.has_permission?(permission, resource, policy, permission_groups_mapping)).to eq true
     end
 
     it 'returns false if there is no permission in policy for given resource' do
       policy = { 'etag' => 123456789, 'version' => 1,  'statements' => { 'companies/1' => ['companies.interviews.readOnly'], 'company/2' => ['companies.interviews.readOnly'] } }
 
-      expect(KnockKnock.has_permission?(permission, resource, policy, roles_with_permissions)).to eq false
+      expect(KnockKnock.has_permission?(permission, resource, policy, permission_groups_mapping)).to eq false
     end
 
     it 'returns false if there is permission in policy but not for given resource' do
       policy = { 'etag' => 123456789, 'version' => 1, 'statements' => { 'company/2' => ['companies.interviews.fullAccess'] }  }
 
-      expect(KnockKnock.has_permission?(permission, resource, policy, roles_with_permissions)).to eq false
+      expect(KnockKnock.has_permission?(permission, resource, policy, permission_groups_mapping)).to eq false
     end
 
     it 'raises exception if permission is nil' do
-      expect { KnockKnock.has_permission?(nil, resource, policy, roles_with_permissions) }.to raise_error(ArgumentError, "permission can't be nil")
+      expect { KnockKnock.has_permission?(nil, resource, policy, permission_groups_mapping) }.to raise_error(ArgumentError, "permission can't be nil")
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.has_permission?(permission, nil, policy, roles_with_permissions) }.to raise_error(ArgumentError, "resource can't be nil")
+      expect { KnockKnock.has_permission?(permission, nil, policy, permission_groups_mapping) }.to raise_error(ArgumentError, "resource can't be nil")
     end
     
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.has_permission?(permission, resource, nil, roles_with_permissions) }.to raise_error(ArgumentError, "policy can't be nil")
+      expect { KnockKnock.has_permission?(permission, resource, nil, permission_groups_mapping) }.to raise_error(ArgumentError, "policy can't be nil")
     end
 
-    it 'raises exception if roles_with_permissions is nil' do
-      expect { KnockKnock.has_permission?(permission, resource, policy, nil) }.to raise_error(ArgumentError, "roles_with_permissions can't be nil")
+    it 'raises exception if permission_groups_mapping is nil' do
+      expect { KnockKnock.has_permission?(permission, resource, policy, nil) }.to raise_error(ArgumentError, "permission_groups_mapping can't be nil")
     end 
   end
 
-  describe '.add_roles' do
+  describe '.add_permission_groups' do
     let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { 'companies/2' => ['companies.interviews.fullAccess'] } } }
-    let!(:role1) { 'companies.interviews.user_interviews.manageResponses' }
-    let!(:roles) { [role1] }
+    let!(:permission_group1) { 'companies.interviews.user_interviews.manageResponses' }
+    let!(:permission_groups) { [permission_group1] }
     let!(:resource) { 'companies/7' }
     
     it 'adds new statement if there is no one with given resource' do
-      updated_policy = KnockKnock.add_roles(policy, roles, resource)
+      updated_policy = KnockKnock.add_permission_groups(policy, permission_groups, resource)
 
       expect(updated_policy['statements']).to have_key(resource)
     end
 
-    it 'adds roles to existing statement if there is one with given resource' do
+    it 'adds permission_groups to existing statement if there is one with given resource' do
       resource = 'companies/2'
-      updated_policy = KnockKnock.add_roles(policy, roles, resource)
+      updated_policy = KnockKnock.add_permission_groups(policy, permission_groups, resource)
 
-      expect(updated_policy['statements'][resource]).to include(role1)
+      expect(updated_policy['statements'][resource]).to include(permission_group1)
     end
 
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.add_roles(nil, [role1], resource) }.to raise_error(ArgumentError, "policy can't be nil")
+      expect { KnockKnock.add_permission_groups(nil, [permission_group1], resource) }.to raise_error(ArgumentError, "policy can't be nil")
     end
 
-    it 'raises exception if roles is nil' do
-      expect { KnockKnock.add_roles(policy, nil, resource) }.to raise_error(ArgumentError, "roles can't be nil")
+    it 'raises exception if permission_groups is nil' do
+      expect { KnockKnock.add_permission_groups(policy, nil, resource) }.to raise_error(ArgumentError, "permission_groups can't be nil")
     end
 
-    it 'raises exception if roles is nil' do
-      expect { KnockKnock.add_roles(policy, [], resource) }.to raise_error(ArgumentError, "roles can't be empty array")
+    it 'raises exception if permission_groups is nil' do
+      expect { KnockKnock.add_permission_groups(policy, [], resource) }.to raise_error(ArgumentError, "permission_groups can't be empty array")
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.add_roles(policy, [role1], nil) }.to raise_error(ArgumentError, "resource can't be nil")
+      expect { KnockKnock.add_permission_groups(policy, [permission_group1], nil) }.to raise_error(ArgumentError, "resource can't be nil")
     end
   end
 
-  describe '.remove_roles' do
-    let!(:role1) { 'companies.interviews.user_interviews.manageResponses' }
+  describe '.remove_permission_groups' do
+    let!(:permission_group1) { 'companies.interviews.user_interviews.manageResponses' }
     let!(:role2) { 'companies.interviews.fullAccess' }
     let!(:resource) { 'companies/1' }
-    let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { resource => [role1, role2] } } }
+    let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { resource => [permission_group1, role2] } } }
     
 
-    it 'removes roles from resource' do
-      updated_policy = KnockKnock.remove_roles(policy, [role1], resource)
+    it 'removes permission_groups from resource' do
+      updated_policy = KnockKnock.remove_permission_groups(policy, [permission_group1], resource)
 
       expect(updated_policy['statements'][resource]).to eq [role2]
     end
 
     it 'removes resource if it does not contain any role' do
-      updated_policy = KnockKnock.remove_roles(policy, [role1, role2], resource)
+      updated_policy = KnockKnock.remove_permission_groups(policy, [permission_group1, role2], resource)
 
       expect(updated_policy['statements']).not_to have_key(resource)
     end
 
     it 'raises exception if policy is nil' do
-      expect { KnockKnock.remove_roles(nil, [role1], resource) }.to raise_error(ArgumentError, "policy can't be nil")
+      expect { KnockKnock.remove_permission_groups(nil, [permission_group1], resource) }.to raise_error(ArgumentError, "policy can't be nil")
     end
 
-    it 'raises exception if roles is nil' do
-      expect { KnockKnock.remove_roles(policy, nil, resource) }.to raise_error(ArgumentError, "roles can't be nil")
+    it 'raises exception if permission_groups is nil' do
+      expect { KnockKnock.remove_permission_groups(policy, nil, resource) }.to raise_error(ArgumentError, "permission_groups can't be nil")
     end
 
-    it 'raises exception if roles is empty array' do
-      expect { KnockKnock.remove_roles(policy, [], resource) }.to raise_error(ArgumentError, "roles can't be empty array")
+    it 'raises exception if permission_groups is empty array' do
+      expect { KnockKnock.remove_permission_groups(policy, [], resource) }.to raise_error(ArgumentError, "permission_groups can't be empty array")
     end
 
     it 'raises exception if resource is nil' do
-      expect { KnockKnock.remove_roles(policy, [role1], nil) }.to raise_error(ArgumentError, "resource can't be nil")
+      expect { KnockKnock.remove_permission_groups(policy, [permission_group1], nil) }.to raise_error(ArgumentError, "resource can't be nil")
     end
   end
 
