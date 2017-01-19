@@ -31,6 +31,7 @@ module KnockKnock
 
     if policy['statements'].has_key?(resource)
       policy['statements'][resource] += permission_groups
+      policy['statements'][resource].uniq!
     else
       policy['statements'][resource] = permission_groups
     end
