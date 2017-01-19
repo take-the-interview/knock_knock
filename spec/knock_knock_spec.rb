@@ -43,9 +43,11 @@ describe KnockKnock do
   end
 
   describe '.add_permission_groups' do
-    let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { 'companies/2' => ['companies.interviews.fullAccess'] } } }
-    let!(:permission_group1) { 'companies.interviews.user_interviews.manageResponses' }
-    let!(:permission_groups) { [permission_group1] }
+    let!(:permission_group1) { 'companies.interviews.fullAccess' }
+    let!(:resource1) { 'companies/2'}
+    let!(:policy) { { 'etag' => 123456789, 'version' => 1, 'statements' => { resource1 => [permission_group1] } } }
+    let!(:permission_group2) { 'companies.interviews.user_interviews.manageResponses' }
+    let!(:permission_groups) { [permission_group2] }
     let!(:resource) { 'companies/7' }
     
     it 'adds new statement if there is no one with given resource' do
@@ -59,6 +61,15 @@ describe KnockKnock do
       updated_policy = KnockKnock.add_permission_groups(policy, permission_groups, resource)
 
       expect(updated_policy['statements'][resource]).to include(permission_group1)
+    end
+
+    it 'does not add duplicate entry if permission_group already exists' do
+      updated_policy = KnockKnock.add_permission_groups(policy, [permission_group1], resource1)
+
+      permission_group_counts = Hash.new(0)
+      updated_policy['statements'][resource1].each { |permission_group| permission_group_counts[permission_group] += 1 }
+
+      expect(permission_group_counts[permission_group1]).to eq 1
     end
 
     it 'raises exception if policy is nil' do
