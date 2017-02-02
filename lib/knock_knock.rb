@@ -1,6 +1,5 @@
 require 'knock_knock/version'
 require 'knock_knock/util'
-require 'pry'
 
 module KnockKnock
   def self.has_permission?(permission, resource, policy, permission_groups_mapping)
